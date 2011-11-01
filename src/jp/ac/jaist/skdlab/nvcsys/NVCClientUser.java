@@ -62,6 +62,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 	}
 	
 	public void reachedMessage(String name, String value) {
+		System.out.println("[" + id + "] Reached message: " + name + " " + value);
 		MessageEvent event = new MessageEvent(this, name, value);
 		for (MessageListener l : messageListenerList) {
 			l.messageThrow(event);
@@ -94,7 +95,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 				reachedMessage(name, value);
 			}
 		} catch (IOException e) {
-			System.err.println("IO Error at NVCClientUser.run()");
+			System.err.println("[" + id + "] IO Error at NVCClientUser.run()");
 		} catch (ClassNotFoundException e) {
 			System.err.println("");
 		}
@@ -111,7 +112,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 			try {
 				close();
 			} catch (IOException ioe) {
-				System.err.println("IO Error at messageThrow()");
+				System.err.println("[" + id + "] IO Error at messageThrow()");
 			}
 		}
 		
@@ -175,6 +176,17 @@ public class NVCClientUser implements Runnable, MessageListener {
 					}
 				} 
 				sendMessage(result);
+			}
+		}
+		
+		// EXIT: Exit of discussion
+		else if (messageType.equals("EXIT")) {
+			Discussion discussion = server.getDiscussion(messageValue);
+			if (discussion != null) {
+				discussion.removeUser(this);
+				sendMessage("MESSAGE exit success");
+			} else {
+				sendMessage("ERROR discussion not found: " + messageValue);
 			}
 		}
 		

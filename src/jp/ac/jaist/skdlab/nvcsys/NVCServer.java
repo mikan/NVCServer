@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Non-verbal communication support system - Server program
+ * The non-verbal communication support system - Server program
  * 
  * @author Yutaka Kato
- * @version 0.0.1
+ * @version 0.1.0
  */
 public class NVCServer {
 
@@ -48,6 +48,7 @@ public class NVCServer {
 		try {
 			serverSocket = new ServerSocket(port);
 			System.out.println("Server startes at port " + port);
+						
 			while (!serverSocket.isClosed()) {
 				// Wait for client's connection
 				Socket clientSocket = serverSocket.accept();
