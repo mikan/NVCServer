@@ -11,7 +11,7 @@ import java.util.List;
  * The non-verbal communication support system - Server program
  * 
  * @author Yutaka Kato
- * @version 0.1.0
+ * @version 0.1.1
  */
 public class NVCServer {
 
@@ -71,7 +71,7 @@ public class NVCServer {
 		
 		// Notify all users
 		for (NVCClientUser u : userList) {
-			u.reachedMessage("getDiscussions", "");
+			u.reachedMessage("GETD", "");
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class NVCServer {
 		
 		// Notify all users
 		for (NVCClientUser u : userList) {
-			u.reachedMessage("getRooms", "");
+			u.reachedMessage("GETD", "");
 		}
 	}
 	
@@ -102,7 +102,7 @@ public class NVCServer {
 		
 		discussionList.clear();
 		for (NVCClientUser u : userList) {
-			u.reachedMessage("getRooms", "");
+			u.reachedMessage("GETD", "");
 		}
 	}
 	

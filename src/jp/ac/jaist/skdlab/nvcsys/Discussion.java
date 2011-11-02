@@ -66,11 +66,23 @@ public class Discussion implements MessageListener {
 		NVCClientUser source = e.getUser();
 		
 		// Talk
-		if (e.getName().equals("MESSAGE")) {
+		if (e.getName().equals("MESSAGE") || e.getName().equals("UP_ALL") || 
+				e.getName().equals("DOWN_ALL")) {
 			for (NVCClientUser u : userList) {
 				String message = e.getName() + " " + source.getName() + ">" +
 						e.getValue();
 				u.sendMessage(message);
+			}
+		}
+		
+		else if (e.getName().equals("UP")) {
+			
+			for (NVCClientUser u : userList) {
+				if (u.getName().equals(e.getValue())) {
+					String message = e.getName() + " " + e.getValue();
+					u.sendMessage(message);
+					return;
+				}
 			}
 		}
 		

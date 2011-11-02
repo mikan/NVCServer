@@ -1,8 +1,9 @@
 package jp.ac.jaist.skdlab.nvcsys;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,20 +53,24 @@ public class NVCClientUser implements Runnable, MessageListener {
 	
 	public void sendMessage(String message) {
 		try {
-			ObjectOutputStream output = 
-					new ObjectOutputStream(socket.getOutputStream());
-			output.writeObject(message);
-			output.flush();
+			PrintWriter writer = new PrintWriter(socket.getOutputStream());
+			writer.println(message);
+			writer.flush();
 		} catch (IOException e) {
 			System.err.println("IO Error at sendMessage()");
 		}
+		System.out.println("[" + id + "] Sent message: " + message);
 	}
 	
 	public void reachedMessage(String name, String value) {
 		System.out.println("[" + id + "] Reached message: " + name + " " + value);
 		MessageEvent event = new MessageEvent(this, name, value);
-		for (MessageListener l : messageListenerList) {
-			l.messageThrow(event);
+		
+//		for (MessageListener l : messageListenerList) {
+//			l.messageThrow(event);
+//		}
+		for (int i = 0; i < messageListenerList.size(); i++) {
+			messageListenerList.get(i).messageThrow(event);
 		}
 	}
 	
@@ -85,10 +90,13 @@ public class NVCClientUser implements Runnable, MessageListener {
 	public void run() {
 		try {
 			// Get user requests
-			ObjectInputStream input = 
-					new ObjectInputStream(socket.getInputStream());
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(socket.getInputStream()));
 			while (!socket.isClosed()) {
-				String messageSource = (String) input.readObject();
+				String messageSource = reader.readLine();
+				if (messageSource == null) {
+					throw new NullPointerException("Couldn't get next message.");
+				}
 				String[] message = messageSource.split(" ", 2);
 				String name = message[0];
 				String value = message.length < 2 ? "" : message[1];
@@ -96,8 +104,9 @@ public class NVCClientUser implements Runnable, MessageListener {
 			}
 		} catch (IOException e) {
 			System.err.println("[" + id + "] IO Error at NVCClientUser.run()");
-		} catch (ClassNotFoundException e) {
-			System.err.println("");
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			System.err.println("[" + id + "] NULL Error at NVCClientUser.run()");
 		}
 	}
 
@@ -135,7 +144,12 @@ public class NVCClientUser implements Runnable, MessageListener {
 			String title = messageValue;
 			if (name.indexOf(" ") == -1) {
 				Discussion discussion = new Discussion(title, this);
-				server.addDiscussion(discussion);
+				discussion.addUser(this);			// Enter
+				server.addDiscussion(discussion);	// Add	
+				sendMessage("ADDD_R Succesful ADDD");
+			} else {
+				sendMessage("ERROR Failed to add discussion: " +
+						"Don't insert whitespace in title");
 			}
 		}
 		
@@ -149,7 +163,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 					result += ",";
 				}
 			}
-			sendMessage(result);
+			sendMessage("GETD_R " + result);
 		}
 		
 		// ENTER: Enter the discussion
@@ -157,7 +171,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 			Discussion discussion = server.getDiscussion(messageValue);
 			if (discussion != null) {
 				discussion.addUser(this);
-				sendMessage("OK");
+				sendMessage("ENTER_R Succesful ENTER");
 			} else {
 				sendMessage("ERROR Discussion not found: " + messageValue);
 			}
@@ -175,9 +189,31 @@ public class NVCClientUser implements Runnable, MessageListener {
 						result += ",";
 					}
 				} 
-				sendMessage(result);
+				sendMessage("GETU_R " + result);
 			}
 		}
+		
+		// MESSAGE: Message
+		else if (messageType.equals("MESSAGE")) {
+			
+		}
+		
+		// UP_ALL: Up screen brightness for all users
+//		else if (messageType.equals("UP_ALL")) {
+//			sendMessage("UP_ALL " + messageValue);
+//		}
+		
+		// UP_ALL: Down screen brightness for all users
+//		else if (messageType.equals("DOWN_ALL")) {
+//			sendMessage("DOWN_ALL " + messageValue);
+//		}
+		
+		// UP_ALL: Up screen brightness for all users
+//		else if (messageType.equals("UP")) {
+//			if (messageValue.equals(name)) {
+//				sendMessage("UP " + name);
+//			}
+//		}
 		
 		// EXIT: Exit of discussion
 		else if (messageType.equals("EXIT")) {
