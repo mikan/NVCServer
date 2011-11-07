@@ -7,7 +7,7 @@ import java.util.List;
  * Abstraction of discussion
  * 
  * @author Yutaka Kato
- * @version 0.0.1
+ * @version 0.1.3
  */
 public class Discussion implements MessageListener {
 	
@@ -35,7 +35,7 @@ public class Discussion implements MessageListener {
 		userList.add(user);
 		for (NVCClientUser u : userList) {
 			u.reachedMessage("GETU", title);
-			u.sendMessage("MESSAGE " + user.getName() + " added");
+			u.sendMessage("ENTER " + user.getName());
 		}
 	}
 	
@@ -52,7 +52,7 @@ public class Discussion implements MessageListener {
 		userList.remove(user);
 		for (NVCClientUser u : userList) {
 			u.reachedMessage("GETU", title);
-			u.sendMessage("MESSAGE " + user.getName() + " removed");
+			u.sendMessage("LEAVE " + user.getName());
 		}
 		
 		// Remove discussion
@@ -65,24 +65,29 @@ public class Discussion implements MessageListener {
 	public void messageThrow(MessageEvent e) {
 		NVCClientUser source = e.getUser();
 		
-		// Talk
-		if (e.getName().equals("MESSAGE") || e.getName().equals("UP_ALL") || 
-				e.getName().equals("DOWN_ALL")) {
+		if (e.getName().equals("MESSAGE")) {
 			for (NVCClientUser u : userList) {
-				String message = e.getName() + " " + source.getName() + ">" +
+				String message = e.getName() + " " + source.getName() + " " +
 						e.getValue();
 				u.sendMessage(message);
 			}
 		}
 		
-		else if (e.getName().equals("UP")) {
-			
+		else if (e.getName().equals("UP_ALL") || 
+				e.getName().equals("DOWN_ALL")) {
 			for (NVCClientUser u : userList) {
-				if (u.getName().equals(e.getValue())) {
+				String message = e.getName() + " " + source.getName();
+				u.sendMessage(message);
+			}
+		}
+		
+		else if (e.getName().equals("UP")) {
+			for (NVCClientUser u : userList) {
+//				if (u.getName().equals(e.getValue())) {
 					String message = e.getName() + " " + e.getValue();
+					u.sendMessage("DOWN_ALL");
 					u.sendMessage(message);
-					return;
-				}
+//				}
 			}
 		}
 		

@@ -11,11 +11,11 @@ import java.util.List;
  * The non-verbal communication support system - Server program
  * 
  * @author Yutaka Kato
- * @version 0.1.1
+ * @version 0.2.0
  */
 public class NVCServer {
 
-	public static final String VERSION = "0.0.1";
+	public static final String VERSION = "0.2.0";
 	private static int port = 30001;
 	private static volatile int nextID = 1;
 	private static NVCServer instance = null;
@@ -35,6 +35,8 @@ public class NVCServer {
 	private NVCServer() {
 		discussionList = new ArrayList<Discussion>();
 		userList = new ArrayList<NVCClientUser>();
+		System.out.println("Non-verbal communication support system - " +
+				"Server program, Version " + VERSION);
 	}
 	
 	public static NVCServer getInstance() {

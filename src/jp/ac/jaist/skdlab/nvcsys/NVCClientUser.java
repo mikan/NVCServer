@@ -12,7 +12,7 @@ import java.util.List;
  * NVCClient's session
  * 
  * @author Yutaka Kato
- * @version 0.0.1
+ * @version 0.1.2
  */
 public class NVCClientUser implements Runnable, MessageListener {
 	
@@ -144,7 +144,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 			String title = messageValue;
 			if (name.indexOf(" ") == -1) {
 				Discussion discussion = new Discussion(title, this);
-				discussion.addUser(this);			// Enter
+				//discussion.addUser(this);			// Enter
 				server.addDiscussion(discussion);	// Add	
 				sendMessage("ADDD_R Succesful ADDD");
 			} else {
@@ -199,21 +199,19 @@ public class NVCClientUser implements Runnable, MessageListener {
 		}
 		
 		// UP_ALL: Up screen brightness for all users
-//		else if (messageType.equals("UP_ALL")) {
-//			sendMessage("UP_ALL " + messageValue);
-//		}
+		else if (messageType.equals("UP_ALL")) {
+			
+		}
 		
 		// UP_ALL: Down screen brightness for all users
-//		else if (messageType.equals("DOWN_ALL")) {
-//			sendMessage("DOWN_ALL " + messageValue);
-//		}
+		else if (messageType.equals("DOWN_ALL")) {
+			
+		}
 		
 		// UP_ALL: Up screen brightness for all users
-//		else if (messageType.equals("UP")) {
-//			if (messageValue.equals(name)) {
-//				sendMessage("UP " + name);
-//			}
-//		}
+		else if (messageType.equals("UP")) {
+			
+		}
 		
 		// EXIT: Exit of discussion
 		else if (messageType.equals("EXIT")) {
