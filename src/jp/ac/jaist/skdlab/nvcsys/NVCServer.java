@@ -11,11 +11,11 @@ import java.util.List;
  * The non-verbal communication support system - Server program
  * 
  * @author Yutaka Kato
- * @version 0.2.0
+ * @version 0.2.1
  */
 public class NVCServer {
 
-	public static final String VERSION = "0.2.0";
+	public static final String VERSION = "0.2.1";
 	private static int port = 30001;
 	private static volatile int nextID = 1;
 	private static NVCServer instance = null;
@@ -133,10 +133,14 @@ public class NVCServer {
 	public void removeUser(NVCClientUser user) {
 		userList.remove(user);
 		System.out.println("User removed");
-		
-		for (Discussion d : discussionList) {
+				
+		int discussionListLength = discussionList.size();
+		for (int i = 0; i < discussionListLength; i++) {
+			
+			Discussion d = discussionList.get(i);
 			if (d.containsUser(user)) {
 				d.removeUser(user);
+				break;
 			}
 		}
 	}
