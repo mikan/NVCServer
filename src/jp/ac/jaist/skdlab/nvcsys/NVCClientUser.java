@@ -86,7 +86,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 		return messageListenerList;
 	}
 
-	@Override
+//	@Override
 	public void run() {
 		try {
 			// Get user requests
@@ -110,7 +110,7 @@ public class NVCClientUser implements Runnable, MessageListener {
 		}
 	}
 
-	@Override
+//	@Override
 	public void messageThrow(MessageEvent e) {
 		
 		String messageType = e.getName();

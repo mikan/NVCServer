@@ -61,7 +61,7 @@ public class Discussion implements MessageListener {
 		}
 	}
 	
-	@Override
+//	@Override
 	public void messageThrow(MessageEvent e) {
 		NVCClientUser source = e.getUser();
 		

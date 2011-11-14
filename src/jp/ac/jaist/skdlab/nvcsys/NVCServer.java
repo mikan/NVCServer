@@ -11,7 +11,7 @@ import java.util.List;
  * The non-verbal communication support system - Server program
  * 
  * @author Yutaka Kato
- * @version 0.2.1
+ * @version 0.2.2
  */
 public class NVCServer {
 
