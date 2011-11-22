@@ -32,7 +32,15 @@ public class Discussion implements MessageListener {
 	
 	public void addUser(NVCClientUser user) {
 		user.addMessageListener(this);
-		userList.add(user);
+		
+		// Duplication check
+		for (int i = 0; i < userList.size(); i++) {
+			if (userList.get(i).getName().equals(user.getName())) {
+				// Kick old user
+				removeUser(user);
+			}
+		}
+		userList.add(user);			
 		for (NVCClientUser u : userList) {
 			u.reachedMessage("GETU", title);
 			u.sendMessage("ENTER " + user.getName());
@@ -61,14 +69,20 @@ public class Discussion implements MessageListener {
 		}
 	}
 	
+	public void setHostUser(NVCClientUser hostUser) {
+		hostUser.addMessageListener(this);
+		userList.set(0, hostUser);
+		this.hostUser = hostUser;
+	}
+	
 //	@Override
 	public void messageThrow(MessageEvent e) {
 		NVCClientUser source = e.getUser();
 		
 		if (e.getName().equals("MESSAGE")) {
 			for (NVCClientUser u : userList) {
-				String message = e.getName() + " " + source.getName() + " " +
-						e.getValue();
+				String message = e.getName() + " by " + source.getName() +
+						" (" + e.getValue() + ")";
 				u.sendMessage(message);
 			}
 		}
@@ -76,14 +90,14 @@ public class Discussion implements MessageListener {
 		else if (e.getName().equals("UP_ALL") || 
 				e.getName().equals("DOWN_ALL")) {
 			for (NVCClientUser u : userList) {
-				String message = e.getName() + " " + source.getName();
+				String message = e.getName() + " by " + source.getName();
 				u.sendMessage(message);
 			}
 		}
 		
 		else if (e.getName().equals("UP")) {
 			for (NVCClientUser u : userList) {
-				String message = e.getName() + " " + e.getValue();
+				String message = e.getName() + " by " + e.getValue();
 //				u.sendMessage("DOWN_ALL");
 				u.sendMessage(message);
 			}

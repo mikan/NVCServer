@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class NVCServer {
 
-	public static final String VERSION = "0.2.1";
+	public static final String VERSION = "0.2.2";
 	private static int port = 30001;
 	private static volatile int nextID = 1;
 	private static NVCServer instance = null;
@@ -35,8 +35,8 @@ public class NVCServer {
 	private NVCServer() {
 		discussionList = new ArrayList<Discussion>();
 		userList = new ArrayList<NVCClientUser>();
-		System.out.println("Non-verbal communication support system - " +
-				"Server program, Version " + VERSION);
+		System.out.println("Non-Verbal Communication Support System - " +
+				"Server Program, Version " + VERSION);
 	}
 	
 	public static NVCServer getInstance() {
@@ -49,7 +49,7 @@ public class NVCServer {
 	public void start() {
 		try {
 			serverSocket = new ServerSocket(port);
-			System.out.println("Server startes at port " + port);
+			System.out.println("Server starts at port " + port);
 						
 			while (!serverSocket.isClosed()) {
 				// Wait for client's connection
@@ -58,9 +58,14 @@ public class NVCServer {
 				addUser(user);
 			}
 		} catch (BindException e) {
-			System.err.println("Bind error by port " + port);
+			System.err.println("ERROR: Bind failed. TCP port " + port + 
+					" was already used by another instance.");
+		} catch (SecurityException e) {
+			System.err.println("ERROR: Failed to initialize server socket by" +
+					" Security configuration.");
 		} catch (IOException e) {
-			System.err.println("Server socket IO error");
+			System.err.println("ERROR: Failed to initialize server socket by" +
+					" IO error.");
 		}
 	}
 	

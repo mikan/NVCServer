@@ -12,7 +12,7 @@ import java.util.List;
  * NVCClient's session
  * 
  * @author Yutaka Kato
- * @version 0.1.2
+ * @version 0.2.0
  */
 public class NVCClientUser implements Runnable, MessageListener {
 	
@@ -142,15 +142,35 @@ public class NVCClientUser implements Runnable, MessageListener {
 		// ADDD: Add a discussion
 		else if (messageType.equals("ADDD")) {
 			String title = messageValue;
-			if (name.indexOf(" ") == -1) {
-				Discussion discussion = new Discussion(title, this);
-				//discussion.addUser(this);			// Enter
-				server.addDiscussion(discussion);	// Add	
-				sendMessage("ADDD_R Succesful ADDD");
-			} else {
-				sendMessage("ERROR Failed to add discussion: " +
-						"Don't insert whitespace in title");
+			Discussion discussion = server.getDiscussion(title);
+
+			// Enter
+			if (discussion != null) {
+				// User search
+				if (!discussion.getUserList().contains(name) &&
+						!discussion.getHostUser().equals(name)) {
+					NVCClientUser oldUser = discussion.getHostUser();
+					discussion.setHostUser(this);
+					sendMessage("ADDD_R Discussion already started");
+					// Kick old operator
+					oldUser.sendMessage("KICK " + oldUser.getName());
+				} else {
+					sendMessage("ADDD_R User already entered");
+				}
 			}
+			
+			// Add
+			else {
+				if (name.indexOf(" ") == -1) {
+					discussion = new Discussion(title, this);
+					server.addDiscussion(discussion);	// Add	
+					sendMessage("ADDD_R Succesful ADDD");
+				} else {
+					sendMessage("ERROR Failed to add discussion: " +
+							"Don't insert whitespace in title");
+				}
+				
+			}			
 		}
 		
 		// GETD: Get current discussion list
@@ -195,22 +215,22 @@ public class NVCClientUser implements Runnable, MessageListener {
 		
 		// MESSAGE: Message
 		else if (messageType.equals("MESSAGE")) {
-			
+			// Process by Discussion class
 		}
 		
 		// UP_ALL: Up screen brightness for all users
 		else if (messageType.equals("UP_ALL")) {
-			
+			// Process by Discussion class
 		}
 		
 		// UP_ALL: Down screen brightness for all users
 		else if (messageType.equals("DOWN_ALL")) {
-			
+			// Process by Discussion class			
 		}
 		
 		// UP_ALL: Up screen brightness for all users
 		else if (messageType.equals("UP")) {
-			
+			// Process by Discussion class
 		}
 		
 		// EXIT: Exit of discussion
@@ -222,6 +242,10 @@ public class NVCClientUser implements Runnable, MessageListener {
 			} else {
 				sendMessage("ERROR discussion not found: " + messageValue);
 			}
+		}
+		
+		else if (messageType.equals("KICK")) {
+			sendMessage("KICK " + messageValue);
 		}
 		
 		// Others
