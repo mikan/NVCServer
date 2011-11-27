@@ -90,14 +90,14 @@ public class Discussion implements MessageListener {
 		else if (e.getName().equals("UP_ALL") || 
 				e.getName().equals("DOWN_ALL")) {
 			for (NVCClientUser u : userList) {
-				String message = e.getName() + source.getName();
+				String message = e.getName() + " " + source.getName();
 				u.sendMessage(message);
 			}
 		}
 		
 		else if (e.getName().equals("UP")) {
 			for (NVCClientUser u : userList) {
-				String message = e.getName() + e.getValue();
+				String message = e.getName() + " " + e.getValue();
 //				u.sendMessage("DOWN_ALL");
 				u.sendMessage(message);
 			}
